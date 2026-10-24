@@ -1,0 +1,18 @@
+{
+  "scenario": "scenario3",
+  "step": 9,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "recorded_at": "2026-10-24T15:22:08",
+  "request_tail": [
+    {
+      "role": "user",
+      "content": "Write the narrative parts of a short incident postmortem for business and engineering readers.\nUse ONLY the facts below. Do NOT include any numbers for money, percentages, durations or counts (the report\nfills those in from computed data); deploy tags and config key names are fine.\nReturn ONLY a JSON object: {\"summary\": \"2-3 sentences\", \"root_cause\": \"2-4 sentences\", \"follow_ups\": [\"3 short items\"]}\n\nFACTS:\n{\"incident\": \"INC-0001\", \"signal\": \"Shop memory rising 178 MB/min (now 145 MB)\", \"service\": \"shop\", \"status\": \"Resolved\", \"bad_deploy\": \"deploy-6\", \"last_good_deploy\": \"deploy-5\", \"decision\": {\"hypotheses\": [{\"cause\": \"Deploy-6 introduced an unbounded session cache in app/main.py causing memory growth (tr-4, KB:PM-03, KB:RB-04)\", \"confidence\": 1.0, \"evidence\": [\"tr-1\", \"tr-2\", \"tr-3\", \"tr-4\", \"tr-7\"]}], \"chosen_action\": \"rollback_deploy\", \"rationale\": \"Since the restart only temporarily mitigated the symptom and memory continues to climb due to the code change in deploy-6, we must roll back to the last good deploy (deploy-5) per policy and KB:RB-04.\", \"expected_effect\": \"Reverts production to deploy-5, removing the unbounded session cache in deploy-6 and stopping memory growth.\", \"risk\": \"Low risk rollback to a stable previous deploy.\"}, \"what_did_not_work\": [\"Did not fix: memory is climbing again (193 MB/min), so the restart only treated the symptom\"], \"escalation\": null}",
+      "tool_calls": null
+    }
+  ],
+  "response": {
+    "text": "{\n  \"summary\": \"An incident occurred in the shop service due to rising memory consumption. The issue was temporarily mitigated by a restart before being fully resolved by rolling back the offending deployment.\",\n  \"root_cause\": \"Deploy-6 introduced an unbounded session cache in app/main.py, which caused continuous memory growth. A simple service restart only treated the symptom rather than fixing the underlying code change.\",\n  \"follow_ups\": [\n    \"Roll back production to deploy-5 per policy and KB:RB-04\",\n    \"Investigate and remove the unbounded session cache in app/main.py\",\n    \"Review deployment validation for memory leak regressions\"\n  ]\n}",
+    "tool_calls": []
+  }
+}

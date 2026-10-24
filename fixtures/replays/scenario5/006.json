@@ -1,0 +1,18 @@
+{
+  "scenario": "scenario5",
+  "step": 6,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "recorded_at": "2026-10-24T13:07:06",
+  "request_tail": [
+    {
+      "role": "user",
+      "content": "Write the narrative parts of a short incident postmortem for business and engineering readers.\nUse ONLY the facts below. Do NOT include any numbers for money, percentages, durations or counts (the report\nfills those in from computed data); deploy tags and config key names are fine.\nReturn ONLY a JSON object: {\"summary\": \"2-3 sentences\", \"root_cause\": \"2-4 sentences\", \"follow_ups\": [\"3 short items\"]}\n\nFACTS:\n{\"incident\": \"INC-0001\", \"signal\": \"Checkout failing for 23% of customers (threshold 5%)\", \"service\": \"shop\", \"status\": \"Resolved\", \"bad_deploy\": \"deploy-6\", \"last_good_deploy\": \"deploy-5\", \"decision\": {\"hypotheses\": [{\"cause\": \"deploy-6 introduced a random failure on the checkout endpoint due to a faulty fraud screening feature added in app/main.py.\", \"confidence\": 1.0, \"evidence\": [\"tr-1\", \"tr-2\", \"tr-3\"]}], \"chosen_action\": \"rollback_deploy\", \"rationale\": \"Deploy-6 introduced a new feature in app/main.py that randomly raises an exception during checkout, causing a 23% error rate. According to policy, since application code changed in the bad deploy, rolling back to the previous stable deploy (deploy-5) is the correct remediation.\", \"expected_effect\": \"Checkout errors will drop to 0% once traffic is served by deploy-5 without the faulty fraud screening code.\", \"risk\": \"Low risk, rolling back to the previous known-good deploy tag (deploy-5).\"}, \"what_did_not_work\": [], \"escalation\": null}",
+      "tool_calls": null
+    }
+  ],
+  "response": {
+    "text": "{\"summary\": \"Checkout failed for a significant portion of customers due to a faulty application deploy on the shop service. The incident was fully resolved by rolling back to the previous stable release.\", \"root_cause\": \"Deploy-6 introduced a faulty fraud screening feature in app/main.py that randomly raised an exception on the checkout endpoint. This unexpected behavior violated error thresholds and triggered the incident response.\", \"follow_ups\": [\"Investigate the faulty fraud screening feature introduced in app/main.py\", \"Review pre-deployment testing for checkout endpoint failure modes\", \"Verify stability on deploy-5 and monitor error rates\"]}",
+    "tool_calls": []
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scenario": "scenario6",
+  "step": 10,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "recorded_at": "2026-10-24T15:48:36",
+  "request_tail": [
+    {
+      "role": "user",
+      "content": "Write the narrative parts of a short incident postmortem for business and engineering readers.\nUse ONLY the facts below. Do NOT include any numbers for money, percentages, durations or counts (the report\nfills those in from computed data); deploy tags and config key names are fine.\nReturn ONLY a JSON object: {\"summary\": \"2-3 sentences\", \"root_cause\": \"2-4 sentences\", \"follow_ups\": [\"3 short items\"]}\n\nFACTS:\n{\"incident\": \"INC-0001\", \"signal\": \"Checkout failing for 100% of customers (threshold 5%)\", \"service\": \"shop\", \"status\": \"Resolved\", \"bad_deploy\": \"deploy-6\", \"last_good_deploy\": \"deploy-5\", \"decision\": {\"hypotheses\": [{\"cause\": \"deploy-6 rotated the API key as well as changing the URL, and reverting only PAYMENT_API_URL left the new invalid API key active, causing 401 Unauthorized errors (log#239).\", \"confidence\": 0.99, \"evidence\": [\"tr-2\", \"tr-3\", \"tr-7\"]}], \"chosen_action\": \"rollback_deploy\", \"rationale\": \"Deploy-6 changed both URL and rotated the API key in config/app.env. Reverting a single key did not restore the previous API key, resulting in 401 Unauthorized errors. According to policy rule 9, after a failed partial config revert, we move to rollback_deploy to the last good deploy (deploy-5).\", \"expected_effect\": \"Production is rolled back to deploy-5, restoring the previous API key and URL configuration and bringing error rate to 0%.\", \"risk\": \"Low risk: rolls back production to the last known stable deployment (deploy-5).\"}, \"what_did_not_work\": [\"Did not fix: th",
+      "tool_calls": null
+    }
+  ],
+  "response": {
+    "text": "```json\n{\n  \"summary\": \"The `shop` service experienced a total checkout failure affecting all customers. The incident was resolved by rolling back the affected deployment to the last known stable version.\",\n  \"root_cause\": \"`deploy-6` changed the service URL and rotated the API key in `config/app.env`. Reverting only `PAYMENT_API_URL` left the new invalid API key active, resulting in `401 Unauthorized` errors.\",\n  \"follow_ups\": [\n    \"Roll back production to `deploy-5`\",\n    \"Verify previous API key and URL configuration restoration\",\n    \"Ensure error rate returns to baseline\"\n  ]\n}\n```",
+    "tool_calls": []
+  }
+}

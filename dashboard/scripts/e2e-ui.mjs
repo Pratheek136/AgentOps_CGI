@@ -1,0 +1,25 @@
+// Click-through: reset, inject scenario, approve in the UI, wait for Resolved. Usage: node scripts/e2e-ui.mjs <n> <outdir>
+import { chromium } from "playwright";
+const n = process.argv[2] ?? "1";
+const out = process.argv[3] ?? ".";
+const api = (p, m = "POST") => fetch(`http://127.0.0.1:8000${p}`, { method: m }).then((r) => r.json());
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+await api("/api/demo/reset");
+await page.goto("http://localhost:5173");
+await page.waitForSelector('[data-testid="conn"]:has-text("Connected")');
+await page.waitForTimeout(4000);
+await page.screenshot({ path: `${out}/ui-idle.png` });
+await api(`/api/demo/fault/${n}`);
+await page.waitForSelector('[data-testid="ticket"]', { timeout: 40000 });
+await page.screenshot({ path: `${out}/ui-alert.png` });
+await page.waitForSelector('[data-testid="approval"]', { timeout: 120000 });
+await page.waitForTimeout(800);
+await page.screenshot({ path: `${out}/ui-approval.png` });
+await page.fill('[data-testid="approval"] textarea', "Diff matches the error logs; low risk");
+await page.click('[data-testid="approve"]');
+await page.waitForSelector('.pill-current:has-text("Resolved")', { timeout: 120000 });
+await page.waitForTimeout(1000);
+await page.screenshot({ path: `${out}/ui-resolved.png`, fullPage: true });
+console.log("UI flow: Resolved");
+await browser.close();

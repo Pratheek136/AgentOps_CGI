@@ -1,0 +1,18 @@
+{
+  "scenario": "scenario4",
+  "step": 7,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "recorded_at": "2026-10-24T13:05:32",
+  "request_tail": [
+    {
+      "role": "user",
+      "content": "Write the narrative parts of a short incident postmortem for business and engineering readers.\nUse ONLY the facts below. Do NOT include any numbers for money, percentages, durations or counts (the report\nfills those in from computed data); deploy tags and config key names are fine.\nReturn ONLY a JSON object: {\"summary\": \"2-3 sentences\", \"root_cause\": \"2-4 sentences\", \"follow_ups\": [\"3 short items\"]}\n\nFACTS:\n{\"incident\": \"INC-0001\", \"signal\": \"Checkout failing for 63% of customers (threshold 5%)\", \"service\": \"shop\", \"status\": \"Escalated\", \"bad_deploy\": \"deploy-5\", \"last_good_deploy\": \"deploy-4\", \"decision\": {\"hypotheses\": [{\"cause\": \"External payment provider outage returning 503 Service Unavailable, identical to KB:PM-04 and KB:RB-07.\", \"confidence\": 1.0, \"evidence\": [\"log#30677\", \"log#30679\", \"log#30681\", \"tr-1\", \"tr-5\"]}], \"chosen_action\": \"escalate\", \"rationale\": \"The error logs show explicit 503 Service Unavailable errors from the external payment provider (upstream outage). The recent deploy (deploy-5) only changed DB_POOL_SIZE and was preceded by a config change, but the error matches an external dependency outage where no code or config change caused the issue. Per KB:PM-04 and KB:RB-07, rollback or config changes are ineffective and harmful for external provider outages; escalating is the correct procedure.\", \"expected_effect\": \"The on-call lead engages the external payment provider and stakeholders, avoiding speculative changes.\", \"risk\": \"Low risk of escalation; avo",
+      "tool_calls": null
+    }
+  ],
+  "response": {
+    "text": "```json\n{\n  \"summary\": \"An incident occurred on the shop service where checkout failed for customers due to external payment provider 503 Service Unavailable errors. The incident was escalated following established knowledge base procedures after confirming an upstream dependency outage rather than a code or configuration defect.\",\n  \"root_cause\": \"The investigation determined that the external payment provider suffered an upstream outage returning 503 Service Unavailable errors, matching known scenarios KB:PM-04 and KB:RB-07. Recent changes, including deploy-5 which modified DB_POOL_SIZE and deploy-4 which added a payment timeout, were confirmed to be unrelated to the upstream responses.\",\n  \"follow_ups\": [\n    \"Engage the external payment provider to resolve the upstream outage.\",\n    \"Monitor external dependency health and error rates.\",\n    \"Review escalation procedures for external provider outages.\"\n  ]\n}\n```",
+    "tool_calls": []
+  }
+}
