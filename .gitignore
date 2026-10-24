@@ -1,0 +1,14 @@
+.venv/
+.env
+shop_repo/
+logs/
+data/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+dashboard/test-results/
+dashboard/playwright-report/
+.DS_Store
+docs/demo_backup.webm
